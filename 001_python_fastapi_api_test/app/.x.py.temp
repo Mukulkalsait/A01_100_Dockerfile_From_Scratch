@@ -1,0 +1,70 @@
+from fastapi import FastAPI # Import FastAPI framework to build the API application
+import logging # Import logging module to write logs to a file (persistent storage)
+import os # Import os module to read environment and system information
+from datetime import datetime # Import datetime to add timestamps in responses and logs
+
+
+# Create FastAPI application instance
+# This object represents our API service
+app = FastAPI(title="001_python_fastapi_api")
+
+
+# Define log directory path inside container
+LOG_DIR = "/app/logs"
+
+# Ensure log directory exists (important for first container start)
+os.makedirs(LOG_DIR, exist_ok=True)
+
+
+# Configure logging to write logs to a file instead of only stdout
+logging.basicConfig(
+    filename=f"{LOG_DIR}/api.log",   # Log file path (persistent via volume)
+    level=logging.INFO,              # Log level (INFO and above)
+    format="%(asctime)s - %(levelname)s - %(message)s"  # Log format
+)
+
+# Create logger object to use in API endpoints
+logger = logging.getLogger(__name__)
+
+
+# Root endpoint to confirm API is running
+@app.get("/")
+def root():
+    logger.info("Root endpoint accessed")  # Write log entry
+    return {
+        "message": "FastAPI service is running",
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+
+# Health check endpoint (used by Docker / Load Balancers / Kubernetes)
+@app.get("/health")
+def health_check():
+    return {
+        "status": "ok"
+    }
+
+
+# Endpoint to return runtime and container information
+@app.get("/info")
+def system_info():
+    logger.info("System info endpoint accessed")  # Log access
+
+    return {
+        "python_version": os.sys.version,      # Python version inside container
+        "working_directory": os.getcwd(),      # Current working directory
+        "pid": os.getpid(),                    # Process ID of running app
+        "time": datetime.utcnow().isoformat()  # Current UTC time
+    }
+
+
+# Endpoint to test persistent logging manually
+@app.get("/log-test")
+def log_test():
+    logger.info("Manual log test triggered")  # Write log entry to file
+
+    return {
+        "message": "Log entry written successfully",
+        "log_file": f"{LOG_DIR}/api.log"
+    }
+
