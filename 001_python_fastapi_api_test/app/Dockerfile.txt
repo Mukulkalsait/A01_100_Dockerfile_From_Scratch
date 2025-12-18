@@ -1,0 +1,49 @@
+
+# Use official lightweight Python base image (stable & widely used in industry)
+FROM python:3.12-slim
+
+# Prevent Python from writing .pyc files (keeps image clean)
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Ensure Python output is sent directly to stdout/stderr (better logging)
+ENV PYTHONUNBUFFERED=1
+
+# Set working directory inside container
+# All following commands will run from /app
+WORKDIR /app
+
+# Install system dependencies (only what is required)
+# gcc is needed for some Python packages with native extensions
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create a non-root user for security (best practice)
+RUN useradd -m appuser
+
+# Copy dependency file first to leverage Docker layer caching
+COPY requirements.txt .
+
+# Install Python dependencies inside container
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application source code into container
+COPY app ./app
+
+# Create logs directory inside container
+RUN mkdir -p /app/logs
+
+
+
+# Change ownership of app directory to non-root user
+RUN chown -R appuser:appuser /app
+
+# Switch to non-root user (prevents privilege escalation)
+USER appuser
+
+# Expose application port (documentation + runtime clarity)
+EXPOSE 8000
+
+# Define default command to start FastAPI using Uvicorn
+# 0.0.0.0 is required so Docker can expose the service
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
