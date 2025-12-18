@@ -1,0 +1,39 @@
+
+# Python
+# Compiled source
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+.eggs/
+
+# Environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Distribution / Packaging
+.Python
+build/
+dist/
+wheels/
+share/python-wheels/
+*.whl
+*.egg
+
+# Reports
+junit.xml
+pytest.log
+.tox/
+.coverage
+.mypy_cache/
+.pytest_cache/
+
+# Editor-specific files
+.idea/  # For PyCharm/IntelliJ
+.vscode/ # For VS Code
+*.swp
