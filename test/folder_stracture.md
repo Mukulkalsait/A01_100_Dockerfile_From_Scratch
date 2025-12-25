@@ -43,3 +43,22 @@
   └── docker-compose.yaml
 
 ```
+
+# sequence of files
+    sshd_config
+    ln -sf sshd_config
+    ssh pub key into /shared/authorized_keys <- file
+    Dockerfile
+    disks.img
+    Docker-compose.yml
+
+
+## scripts
+    systemd check 
+    firewalld ufw check
+    ip check | ping check
+    ssh checkers
+
+    
+  
+    
