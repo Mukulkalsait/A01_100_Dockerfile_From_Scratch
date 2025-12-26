@@ -1,0 +1,12 @@
+# Y: Common in all.
+
+port 22 
+PermitRootLogin no
+PasswordAuthentication yes
+usePAM yes 
+AllowTcpForwarding yes
+ChallengeResponseAuthentication no
+X11Forwarding no
+
+# asdf
+
