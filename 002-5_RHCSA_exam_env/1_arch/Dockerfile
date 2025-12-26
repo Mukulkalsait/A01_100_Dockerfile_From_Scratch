@@ -4,7 +4,7 @@ ENV container=podman
 
 RUN pacman -Syu --noconfirm 
 RUN pacman -Sy --noconfirm \
-    systemd firewalld openssh sudo \
+    systemd firewalld openssh sudo procps-ng \
     vim curl less tar gzip iproute2 iputils 
 
 RUN mkdir -p /run/sshd 
