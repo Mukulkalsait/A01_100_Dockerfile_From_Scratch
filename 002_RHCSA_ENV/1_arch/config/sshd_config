@@ -1,0 +1,9 @@
+# sshd_config  for all.
+
+Port 22 
+PermitRootLogin no
+PasswordAuthentication yes
+usePAM yes
+AllowTcpForwarding yes
+ChallengeResponseAuthentication no
+X11Forwarding no
