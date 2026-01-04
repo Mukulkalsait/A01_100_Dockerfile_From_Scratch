@@ -1,7 +1,9 @@
 FROM ubuntu:26.04
-ENV container=podman
 
-RUN apt update -y && apt upgrade -y
+ENV container=podman
+#Y: disable hardware-related services (udev, dbus-hw, mounts, real tty management) and not to panic if kernel features are missing without it 
+
+RUN apt update -y
 RUN apt install -y --no-install-recommends systemd firewalld openssh-server sudo procps \
     vim curl wget less iproute2 iputils-ping gzip tar
 RUN apt-get clean
@@ -21,5 +23,4 @@ COPY ./scripts/init.sh /scripts
 RUN chmod -R +x /scripts
 
 EXPOSE 22
-
 CMD [ "/usr/lib/systemd/systemd" ]
