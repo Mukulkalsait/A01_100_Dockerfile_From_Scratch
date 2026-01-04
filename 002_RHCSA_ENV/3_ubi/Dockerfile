@@ -1,9 +1,11 @@
 FROM registry.access.redhat.com/ubi10/ubi-init
 ENV container=podman
 
+STOPSIGNAL SIGRTMIN+3
+
 RUN dnf clean all
-RUN dnf install -y --allowerasing systemd openssh-server sudo procps \
-    vim less curl wget iproute iputils gzip tar
+RUN dnf install -y --allowerasing systemd openssh-server openshh-client sudo procps \
+    vim less curl wget iproute iputils gzip tar passwd
 RUN dnf clean all
 
 RUN mkdir -p /run/sshd
