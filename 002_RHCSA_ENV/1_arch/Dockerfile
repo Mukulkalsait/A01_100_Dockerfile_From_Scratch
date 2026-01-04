@@ -2,7 +2,7 @@ FROM archlinux:latest
 ENV container=podman
 
 RUN pacman -Syu --noconfirm
-RUN pacman -Sy --noconfirm systemd firewalld openssh sudo procps \
+RUN pacman -Sy --noconfirm systemd firewalld openssh sudo procps-ng \
     vim curl less tar gzip iproute2 iputils
 
 RUN mkdir -p /run/sshd
@@ -19,6 +19,7 @@ COPY ./config/sshd_config /etc/ssh/sshd_config
 
 COPY ./scripts/ /scripts
 RUN chmod -R +x /scripts
+RUN systemctl enable sshd
 
 EXPOSE 22
 
