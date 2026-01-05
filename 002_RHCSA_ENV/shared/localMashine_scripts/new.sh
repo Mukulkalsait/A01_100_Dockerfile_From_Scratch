@@ -1,31 +1,16 @@
 #!/usr/bin/env bash
 
-RED='\033[0;31m'
-# GREEN='\033[0;32m'
-# YELLOW='\033[0;33m'
-# BLUE='\033[0;34m'
-NC='\033[0m'
+: <<EOF
+Bash Scritp for managing disks.
+EOF
 
 # e=exit u=upnsetVar o=O like looking pipeline
 set -euo pipefail
 
 BASE_DIR="../../disks"
-EXPECTED_DIRS=("1_arch""2_rocky""3_ubi""4_ubuntu")
-
-# 1. if directory exists and match return no=1
-# 2. count directory
-# 3. create folders
-# 4. remove all folders
-# - 5. disk created
-# 6. select disk size -> 5
-#
-# exiting = count
-# expected = expected#count
-#
-# if exiting == 0  -> 3 & 6
-# else => expected == exiting 🔯 all exciting => recreate? 1/anyring
-# if 1=> 4, 3, 6
-# else => exit2
+EXPECTED_DIRS=("1_arch" "2_rocky" "3_ubi" "4_ubuntu")
+RED='\033[0;31m'
+NC='\033[0m'
 
 if_directory_exists_and_matches() {
   for dir in "${EXPECTED_DIRS[@]}"; do
@@ -35,12 +20,10 @@ if_directory_exists_and_matches() {
   return 0
 }
 
-# if_directory_exists_and_matches
-
 count_directory() {
   local count=0
   for dir in "${EXPECTED_DIRS[@]}"; do
-    [[ -d "${BASE_DIR}/$dir" ]] || ((count++))
+    [[ -d "${BASE_DIR}/$dir" ]] && ((count++))
   done
   echo "$count" # Y: print
 }
@@ -67,34 +50,36 @@ create_disk() {
   done
 }
 
-# disk_img_size() {
-#   read -r -p "Select Storage Sizes: 1:50Mb | 2:100Mb | 3:200Mb" disk_size
-#   case "$disk_size" in
-#   1) create_disk "50m" ;;
-#   2) create_disk "50m" ;;
-#   3) create_disk "50m" ;;
-#   *)
-#     echo "Please Choose Right Options."
-#     exit 1
-#     ;;
-#   esac
-# }
+disk_img_size() {
+  read -r -p "Select Storage Sizes: 1:50Mb | 2:100Mb | 3:200Mb : " disk_size
+  case "$disk_size" in
+  1) create_disk "50m" ;;
+  2) create_disk "100m" ;;
+  3) create_disk "200m" ;;
+  *)
+    echo "Please Choose Right Options."
+    exit 1
+    ;;
+  esac
+}
 
 exisisting=$(count_directory)
-expected=${#EXPECTED_DIRS[@]} # Y: count of Expected Dirs.
-
-echo "$expected"
-echo "$exisisting"
 
 if [[ "$exisisting" -eq "0" ]]; then
   create_folders
   disk_img_size
-elif [[ "$exisisting" -eq "$expected" ]]; then
-  read -r -p "Folders Already Esists. \nDelete & Rebuild? \n YES=1 " delete_conformation
+elif if_directory_exists_and_matches; then
+  echo -e "Folders Already Esists. \n${RED}Delete & Rebuild? ${NC}"
+  read -r -p $"\n YES=1 : " delete_conformation
+
   if [[ ${delete_conformation} == "1" ]]; then
     echo "${RED}|> Removind All Data... ${NC}"
+    delete_folders
+    create_folders
+    disk_img_size
   else
     echo "|> User Aborted."
+    exit 1
   fi
 else
   echo "⚠️Partial Folsers exisists. -> Please Remove normally."
