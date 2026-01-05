@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BASE_DIR="../../discs"
+EXPECTED_DIRS=("1_arch" "2_rocky" "3_ubi" "4_ubuntu")
+
+directory_exists_and_matches() {
+  for d in "${EXPECTED_DIRS[@]}"; do
+    [[ -d "$BASE_DIR/$d" ]] || return 1
+  done
+  return 0
+}
+
+count_existing_dirs() {
+  local count=0
+  for d in "${EXPECTED_DIRS[@]}"; do
+    [[ -d "$BASE_DIR/$d" ]] && ((count++))
+  done
+  echo "$count"
+}
+
+create_folders() {
+  for d in "${EXPECTED_DIRS[@]}"; do
+    mkdir -p "$BASE_DIR/$d"
+    echo "|> $d Folder Created."
+  done
+}
+
+remove_all_folders() {
+  for d in "${EXPECTED_DIRS[@]}"; do
+    rm -rf "$BASE_DIR/$d"
+  done
+}
+
+disc_create() {
+  echo "$1"
+  truncate -s 2G disks/ubuntu/disk1.img
+  for d in "${EXPECTED_DIRS[@]}"; do
+    truncate -s $1 "$"
+  done
+
+}
+
+create_disc_files() {
+  read -r -p "Select Storage 1:50MB | 2:100MB | 3:200MB: " storage
+  case "$storage" in
+  1)
+    echo "Disk of size 50MB 🍏 will be created."
+    disc_createi "50M"
+    ;;
+  2) echo "Disk of size 100MB 🔖 will be created." ;;
+  3) echo "Disk of size 200MB 🚀 will be created." ;;
+  *)
+    echo "Invalid option"
+    exit 1
+    ;;
+  esac
+}
+
+existing=$(count_existing_dirs)
+total=${#EXPECTED_DIRS[@]}
+
+if [[ "$existing" -eq 0 ]]; then
+  create_folders
+  create_disc_files
+
+elif [[ "$existing" -eq "$total" ]]; then
+  read -r -p $'Folders exist.\nDelete & rebuild?\nYES=1: ' delete_confirmation
+  if [[ "$delete_confirmation" == "1" ]]; then
+    remove_all_folders
+    create_folders
+    create_disc_files
+  else
+    exit 1
+  fi
+
+else
+  echo "⚠️ Partial directory state detected."
+  echo "Some folders exist and may contain important data."
+  exit 2
+fi
