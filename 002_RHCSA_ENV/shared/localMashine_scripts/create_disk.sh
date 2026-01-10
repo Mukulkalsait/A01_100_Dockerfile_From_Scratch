@@ -41,3 +41,7 @@ set -euo pipefail
 
 BASE_DIR="../.../../disks"
 EXPECTED_FOLDERS=("1_arch" "2_rocky" "3_ubi" "4_ubuntu")
+
+if_folder_exists() {
+
+}
