@@ -27,11 +27,11 @@ services:
           fieldRef:
             fieldPath: metadata.nodeName
 
-volumes: 
-  logs:
-
-networks: 
-  network1:
-    driver: bridge
-
-
+# volumes: 
+#   logs:
+#
+# networks: 
+#   network1:
+#     driver: bridge
+#
+#
