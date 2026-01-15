@@ -4,8 +4,10 @@ ENV container=podman
 STOPSIGNAL SIGRTMIN+3
 
 RUN dnf clean all
+
 RUN dnf install -y --allowerasing systemd openssh-server openshh-client sudo procps \
     vim less curl wget iproute iputils gzip tar passwd
+
 RUN dnf clean all
 
 RUN mkdir -p /run/sshd
