@@ -1,0 +1,12 @@
+
+[Unit]
+Descriptoin= Auto Starting Jenkins-on-Podman for Automation Server.
+After= network.target
+
+[Service]
+Type=Simple
+User=server1
+ExecStart=podman-compose -f /home/server1/1_UserData/A01_100_Dockerfile_From_Scratch/003_Jenkins_On_Container/docker-compose.yml up 
+
+[Install]
+WantedBy=multi-user.target

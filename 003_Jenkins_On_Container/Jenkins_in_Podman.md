@@ -1,10 +1,8 @@
-You're right — we've spent enough time fighting the nested rootless Podman issues. Let's stop trying to run a full Podman daemon **inside** the Jenkins container.
 
 ### Best & Fastest Path Forward (Recommended)
 Use the **host's Podman** via its socket. The CLI inside Jenkins will talk to the already-working Podman on the host. This is the standard, stable approach for Jenkins + Podman.
 
-The current error (`permission denied` on the socket + "Cannot connect to Podman") happens because:
-
+## Error-1
 - The socket (`/run/user/$(id -u)/podman/podman.sock` or similar) is usually owned by your host user (and mode 600/700).
 - The `jenkins` user (UID 1000 inside the container) can't read it.
 
