@@ -1,16 +1,29 @@
 
-### Best & Fastest Path Forward (Recommended)
 Use the **host's Podman** via its socket. The CLI inside Jenkins will talk to the already-working Podman on the host. This is the standard, stable approach for Jenkins + Podman.
 
-## Error-1
+#### ERROR: 1. 'Podman' command not found: 
+- solutions added
+  ```Dockerfile 
+  RUN apt-get install -y --no-install-recommends podman uidmap fuse-overlayfs slirp4netns && rm -rf /var/lib/apt/lists/* 
+  // podman installation 
+
+  ```
+
+```yml 
+  // podman socket of host into container
+  Volumes:
+      - /run/user/1000/podman/podman.sock:/run/podman/podman.sock:rw
+```
+
+#### ERROR: 2. Podman "ps/info/etc" commands failing deu to no permission to access sockets: 
+
 - The socket (`/run/user/$(id -u)/podman/podman.sock` or similar) is usually owned by your host user (and mode 600/700).
 - The `jenkins` user (UID 1000 inside the container) can't read it.
 
 #### Step 1: Fix Socket Permissions on the Host (One-time)
-On your **host** (server1), run these commands as your normal user (the one that runs Podman):
 
 ```bash
-# Make sure the user socket is active
+# Activate the socket for the user.
 systemctl --user enable --now podman.socket
 
 # Check the exact socket path and ownership
@@ -18,13 +31,12 @@ ls -lZ /run/user/$(id -u)/podman/podman.sock
 podman info | grep -E 'socket|remote|rootless'
 ```
 
-To allow the Jenkins user (UID 1000) to access it without making it world-readable (reasonably secure):
 
 ```bash
 # Option A: Add read permission for others (quickest, common for this use case)
 chmod 666 /run/user/$(id -u)/podman/podman.sock
 
-# Option B: Better — make a group (if you want to avoid 666)
+# Option B: Better — make a group
 # sudo groupadd -g 1000 podman-jenkins   # if gid 1000 not taken
 # sudo usermod -aG podman-jenkins $(whoami)
 # chgrp podman-jenkins /run/user/$(id -u)/podman/podman.sock
