@@ -1,0 +1,31 @@
+{
+  "uuid": "5b6f8cd4-a92c-41b0-bccb-2f4ee37ab6d2",
+  "lastMigration": 25,
+  "name": "My API",
+  "port": 3000,
+  "routes": [
+    {
+      "uuid": "route-1",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "/",
+      "responses": [
+        {
+          "uuid": "resp-1",
+          "body": "{\"message\":\"Hello Mukul 🚀\"}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE"
+        }
+      ],
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  mockoon:
+    image: docker.io/mockoon/cli:latest
+    container_name: mock-api
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      # Mount current folder's mockoon.json into container
+      - ./mockoon.json:/mockoon.json:ro
+
+    command: >
+      -d /mockoon.json
+      -p 3000
+
+
+
+#  curl -o mockoon.json https://raw.githubusercontent.com/mockoon/mockoon/master/packages/cli/test/data/envs/test-env.json
